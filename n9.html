@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' blob:; style-src 'self' 'unsafe-inline' https://gmitweb.com; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains; preload">
+    <title>VIP Prize Bond System</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #0a0a0a;
+            background-image: radial-gradient(circle at 10% 20%, rgba(255,215,0,0.1) 0%, rgba(0,0,0,0.9) 90%);
+            color: white;
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1300px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(20, 20, 20, 0.9);
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
+            border-radius: 10px;
+            border: 2px solid #D4AF37;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                #D4AF37 20%, 
+                #FFD700 50%, 
+                #D4AF37 80%, 
+                transparent 100%);
+        }
+        
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 0 5px;
+        }
+
+        #language-selector {
+            background: #333;
+            color: white;
+            border-radius: 5px;
+            padding: 5px;
+            border: 1px solid #555;
+        }
+        
+        h1 {
+            text-align: center;
+            margin: 10px auto 20px;
+            padding: 15px 10px;
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            color: #FFD700;
+            letter-spacing: 2px;
+            position: relative;
+            text-transform: uppercase;
+            font-weight: 800;
+            background: linear-gradient(135deg, rgba(30,30,30,0.8) 0%, rgba(50,50,50,0.8) 100%);
+            border-radius: 15px;
+            border: 2px solid #D4AF37;
+            box-shadow: 0 5px 25px rgba(212, 175, 55, 0.5);
+            max-width: 90%;
+            overflow: hidden;
+            animation: mainTitlePulse 4s infinite;
+        }
+        
+        @keyframes mainTitlePulse {
+            0%, 100% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.7); box-shadow: 0 5px 25px rgba(212, 175, 55, 0.5); }
+            50% { text-shadow: 0 0 25px rgba(255, 215, 0, 1), 0 0 40px rgba(255, 215, 0, 0.5); box-shadow: 0 5px 35px rgba(212, 175, 55, 0.8); }
+        }
+        
+        h1::before, h1::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 120%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 215, 0, 0.1) 45%,
+                rgba(255, 215, 0, 0.3) 50%,
+                rgba(255, 215, 0, 0.1) 55%,
+                transparent 100%);
+            transform: skewX(-25deg);
+            animation: shimmer 5s infinite;
+        }
+        
+        h1::after {
+            animation-delay: 2.5s;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -150%; }
+            100% { left: 150%; }
+        }
+        
+        .main-title-emoji {
+            display: inline-block;
+            animation: floatMainEmoji 3s infinite alternate;
+            vertical-align: middle;
+            margin: 0 10px;
+            font-size: 0.9em;
+        }
+        
+        @keyframes floatMainEmoji {
+            0% { transform: translateY(-5px) rotate(-8deg); }
+            50% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(5px) rotate(8deg); }
+        }
+        
+        .title-highlight {
+            display: inline-block;
+            color: #FFFFFF;
+            background: linear-gradient(90deg, #D4AF37 0%, #FFD700 50%, #D4AF37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            padding: 0 5px;
+            text-shadow: none;
+            position: relative;
+            z-index: 1;
+        }
+
+        .author-credit {
+            text-align: center;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            color: #D4AF37;
+            margin: -10px auto 10px; /* Adjusted margin */
+            font-style: italic;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 6px;
+            max-width: 90%;
+            background: rgba(10, 10, 10, 0.5);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5), inset 0 0 5px rgba(212, 175, 55, 0.1);
+        }
+
+        .author-credit a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .author-credit::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.7), transparent);
+            animation: scanLine 5s linear infinite;
+            animation-delay: 2s;
+        }
+
+        @keyframes scanLine {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+        
+        .author-name {
+            font-weight: bold;
+            color: #FFD700;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .version-info {
+            color: #D4AF37;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+        
+        @keyframes lineGlow {
+            0% { box-shadow: 0 0 5px rgba(255,215,0,0.3); }
+            100% { box-shadow: 0 0 15px rgba(255,215,0,0.7); }
+        }
+        
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .input-group input {
+            flex: 1 1 150px;
+            min-width: 0;
+            padding: 15px;
+            font-size: 18px;
+            border-radius: 8px;
+            text-align: center;
+            border: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .input-gold {
+            background: linear-gradient(135deg, #F9E79F 0%, #D4AF37 50%, #F9E79F 100%);
+            color: #5E2C04;
+            border: 2px solid #FFD700;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .input-gold::placeholder {
+            color: #7D5A2A;
+            opacity: 0.7;
+        }
+        
+        .input-gold::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, rgba(255,215,0,0.3) 0%, rgba(255,215,0,0) 50%, rgba(255,215,0,0.3) 100%);
+            z-index: -1;
+            border-radius: 12px;
+        }
+        
+        .input-silver {
+            background: linear-gradient(135deg, #E6E6E6 0%, #C0C0C0 50%, #E6E6E6 100%);
+            color: #333;
+            border: 2px solid #C0C0C0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .input-silver::placeholder {
+            color: #555;
+            opacity: 0.7;
+        }
+        
+        .input-silver::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, rgba(192,192,192,0.3) 0%, rgba(192,192,192,0) 50%, rgba(192,192,192,0.3) 100%);
+            z-index: -1;
+            border-radius: 12px;
+        }
+        
+        .input-gold:hover, .input-silver:hover {
+            transform: translateY(-3px);
+        }
+        .input-gold:hover { box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4); }
+        .input-silver:hover { box-shadow: 0 8px 25px rgba(192, 192, 192, 0.4); }
+        
+        .input-gold:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.5);
+        }
+        
+        .input-silver:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(192, 192, 192, 0.5);
+        }
+
+        .range-selector-container { margin-bottom: 20px; }
+        .range-label { font-size: 18px; font-weight: bold; color: #FFD700; margin-bottom: 10px; display: block; }
+        .range-options { display: flex; flex-wrap: wrap; gap: 10px; }
+        .range-btn {
+            flex: 1 1 auto;
+            padding: 12px 15px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            background: linear-gradient(135deg, #333 0%, #222 100%);
+            border: 1px solid #555;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .range-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+        .range-btn.active {
+            background: linear-gradient(135deg, #FFD700 0%, #D4AF37 100%);
+            color: #222;
+            border-color: #FFD700;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .button-group button {
+            width: 100%;
+            margin-bottom: 0;
+        }
+        
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            border-radius: 8px;
+            border: none;
+            margin-bottom: 20px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #FFD700 0%, #D4AF37 100%);
+            cursor: pointer;
+            color: #222;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #FFD700;
+        }
+        
+        .glow-button { animation: buttonGlow 2s infinite alternate; }
+        @keyframes buttonGlow {
+            0% { box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); }
+            100% { box-shadow: 0 4px 25px rgba(212, 175, 55, 0.8); }
+        }
+        
+        button:hover {
+            background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.6);
+        }
+        
+        button:active { transform: translateY(1px); }
+        
+        button::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(30deg);
+            transition: all 0.3s;
+        }
+        
+        button:hover::after { left: 100%; }
+        
+        .operation-selector { display: flex; gap: 15px; margin-bottom: 20px; }
+        .operation-btn {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: linear-gradient(135deg, #333 0%, #222 100%);
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid #555;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .operation-btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,215,0,0.2), transparent);
+            transition: all 0.5s;
+        }
+        
+        .operation-btn:hover::before { left: 100%; }
+        
+        .operation-btn.active {
+            background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);
+            color: #222;
+            border: 1px solid #FFD700;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+        }
+        
+        .custom-range { display: none; gap: 15px; margin-bottom: 20px; }
+        .custom-range input {
+            flex: 1;
+            padding: 15px;
+            font-size: 18px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #555;
+            background: #444;
+            color: white;
+        }
+        
+        .result-section {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(30, 30, 30, 0.8);
+            border-radius: 10px;
+            border: 1px solid #444;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .common-numbers {
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #5E2C04 0%, #7D5A2A 100%);
+            border-radius: 10px;
+            font-weight: bold;
+            border: 1px solid #D4AF37;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        .common-numbers h3 { font-size: clamp(1rem, 4vw, 1.25rem); word-break: break-word; margin: 0; }
+        
+        .code-result {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(30, 30, 30, 0.8);
+            border-radius: 10px;
+            text-align: left;
+            overflow-x: auto;
+            border: 1px solid #444;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .highlight {
+            background-color: gold;
+            color: black;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: bold;
+            box-shadow: 0 0 5px rgba(255,215,0,0.7);
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+        }
+
+        .progress-bar-container {
+            width: 90%;
+            max-width: 400px;
+            background: #2a2a2a;
+            border: 2px solid #D4AF37;
+            border-radius: 15px;
+            padding: 8px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3), 0 0 40px rgba(255, 215, 0, 0.2);
+            position: relative;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 30px;
+            background: linear-gradient(90deg, #D4AF37, #FFD700);
+            border-radius: 10px;
+            transition: width 0.2s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background-image: linear-gradient(
+                -45deg, 
+                rgba(255, 255, 255, .2) 25%, 
+                transparent 25%, 
+                transparent 50%, 
+                rgba(255, 255, 255, .2) 50%, 
+                rgba(255, 255, 255, .2) 75%, 
+                transparent 75%, 
+                transparent
+            );
+            z-index: 1;
+            background-size: 50px 50px;
+            animation: move 2s linear infinite;
+            border-radius: 10px;
+        }
+
+        @keyframes move {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 50px; }
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px #000;
+            z-index: 2;
+        }
+        
+        .casino-text {
+            margin-top: 20px;
+            color: gold;
+            font-family: 'Arial Black', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px gold;
+            font-size: 16px;
+            animation: textGlow 2s infinite alternate;
+        }
+        
+        @keyframes textGlow {
+            from { text-shadow: 0 0 10px gold; }
+            to { text-shadow: 0 0 20px gold, 0 0 30px #D4AF37; }
+        }
+        
+        .cm-container {
+            margin-bottom: 30px;
+            background: rgba(40, 40, 40, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #555;
+            overflow-x: auto;
+        }
+        
+        .cm-title {
+            margin-bottom: 15px;
+            font-size: 20px;
+            color: gold;
+            text-shadow: 0 0 5px rgba(255,215,0,0.5);
+            display: flex;
+            align-items: center;
+        }
+        
+        .cm-title::before { content: "★"; margin-right: 10px; color: #FFD700; }
+        
+        .code-row { display: flex; align-items: flex-start; margin-bottom: 10px; flex-wrap: nowrap; }
+        .code-label { min-width: 120px; font-family: monospace; color: gold; margin-right: 10px; flex-shrink: 0; }
+        .digit-columns { display: flex; gap: 3px; padding-bottom: 10px; }
+        .digit-column { display: flex; flex-direction: column; gap: 3px; }
+        .digit-box {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #555;
+            border-radius: 3px;
+            font-size: 14px;
+            font-family: monospace;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+        }
+        
+        .digit-box.highlight {
+            background-color: gold;
+            color: black;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(255,215,0,0.7);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .decimal-point-box {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-family: monospace;
+            color: gold;
+        }
+        
+        .pattern-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(30, 30, 30, 0.8);
+            border-radius: 10px;
+            border: 1px solid #444;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .section-title {
+            margin-bottom: 25px;
+            font-size: 24px;
+            color: #FFD700;
+            text-align: center;
+            position: relative;
+            padding: 10px 0;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(255,215,0,0.7);
+            animation: titleGlow 2s infinite alternate;
+            background: linear-gradient(90deg, transparent 0%, rgba(40, 40, 40, 0.7) 20%, rgba(40, 40, 40, 0.7) 80%, transparent 100%);
+            border-radius: 15px;
+        }
+        
+        .section-title::before,
+        .section-title::after {
+            display: inline-block;
+            margin: 0 10px;
+            animation: floatEmoji 3s infinite alternate;
+            vertical-align: middle;
+        }
+        
+        @keyframes floatEmoji {
+            0% { transform: translateY(-3px) rotate(-5deg); }
+            50% { transform: translateY(3px) rotate(5deg); }
+            100% { transform: translateY(-3px) rotate(-5deg); }
+        }
+        
+        .pattern-title { margin-bottom: 25px; }
+        @keyframes titleGlow {
+            0% { text-shadow: 0 0 5px rgba(255,215,0,0.5); }
+            50% { text-shadow: 0 0 15px rgba(255,215,0,0.8), 0 0 30px rgba(255,215,0,0.4); }
+            100% { text-shadow: 0 0 5px rgba(255,215,0,0.5); }
+        }
+        
+        .pattern-result { margin-top: 15px; }
+        .pattern-cm-container {
+            margin-bottom: 30px;
+            background: rgba(40, 40, 40, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #555;
+            overflow-x: auto;
+        }
+        .pattern-cm-title { margin-bottom: 15px; font-size: 20px; color: gold; text-shadow: 0 0 5px rgba(255,215,0,0.5); display: flex; align-items: center; }
+        .pattern-cm-title::before { content: "★"; margin-right: 10px; color: #FFD700; }
+        .pattern-code-row { display: flex; align-items: flex-start; margin-bottom: 10px; flex-wrap: nowrap; }
+        .pattern-code-label { min-width: 120px; font-family: monospace; color: gold; margin-right: 10px; flex-shrink: 0; }
+        .pattern-digit-columns { display: flex; gap: 3px; padding-bottom: 10px; }
+        .pattern-digit-column { display: flex; flex-direction: column; gap: 3px; }
+        .pattern-digit-box {
+            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+            background: #555; border-radius: 3px; font-size: 14px; font-family: monospace;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.5); color: white;
+        }
+        .pattern-digit-box.highlight {
+            background-color: gold; color: black; font-weight: bold;
+            box-shadow: 0 0 10px rgba(255,215,0,0.7); animation: pulse 1.5s infinite;
+        }
+        .pattern-decimal-point-box {
+            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-family: monospace; color: gold;
+        }
+
+        .history-section {
+            margin-top: 30px; padding: 20px; background: rgba(30, 30, 30, 0.8);
+            border-radius: 10px; border: 1px solid #444; box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+            display: none;
+        }
+        #history-list { max-height: 300px; overflow-y: auto; padding-right: 10px; }
+        .history-item {
+            background: rgba(40, 40, 40, 0.7); border: 1px solid #555; border-radius: 8px;
+            padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between;
+            align-items: center; flex-wrap: wrap;
+        }
+        .history-details { font-size: 14px; flex-grow: 1; }
+        .history-details p { margin: 2px 0; }
+        .history-details strong { color: #FFD700; }
+        .history-item button {
+            width: auto; padding: 8px 15px; font-size: 14px; margin-left: 15px;
+            margin-bottom: 0; flex-shrink: 0;
+        }
+
+        #popup-message {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background: linear-gradient(135deg, #FFD700 0%, #D4AF37 100%); color: #222;
+            padding: 15px 30px; border-radius: 8px; box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+            z-index: 10000; font-weight: bold; font-size: 16px; opacity: 0;
+            visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        #popup-message.error { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; }
+        #popup-message.show { opacity: 1; visibility: visible; }
+        
+        .footer-popup {
+            position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
+            background: linear-gradient(135deg, #222 0%, #111 100%); color: #FFD700;
+            padding: 15px 30px; border-radius: 10px 10px 0 0; box-shadow: 0 -5px 25px rgba(0,0,0,0.5);
+            z-index: 10001; font-weight: bold; font-size: 16px; transition: bottom 0.5s ease;
+            border-top: 2px solid #D4AF37; display: flex; align-items: center;
+        }
+        .footer-popup.show { bottom: 0; }
+        .footer-popup a { color: #FFD700; text-decoration: none; }
+        .footer-popup .close-btn {
+            background: none; border: none; color: #FFD700; font-size: 24px;
+            cursor: pointer; margin-left: 20px; padding: 0 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            h1 { font-size: clamp(1.5rem, 4.5vw, 2.5rem); padding: 12px 8px; letter-spacing: 1px; margin-bottom: 5px; }
+            .author-credit { font-size: clamp(0.7rem, 2.5vw, 0.9rem); margin: 10px auto 15px; white-space: normal; }
+            .main-title-emoji { font-size: 0.8em; margin: 0 5px; }
+            .input-group input { flex: 1 1 100%; padding: 12px; font-size: 16px; }
+            .custom-range { flex-direction: column; }
+            .digit-box, .decimal-point-box { width: 20px; height: 20px; font-size: 14px; }
+            .code-label { min-width: 100px; font-size: 14px; }
+            select, button { padding: 12px; font-size: 16px; }
+        }
+        
+        @media (max-width: 480px) {
+            h1 { font-size: clamp(1.2rem, 5vw, 1.8rem); padding: 10px 5px; letter-spacing: 1px; margin-bottom: 5px; max-width: 95%; }
+            .author-credit { font-size: clamp(0.6rem, 3vw, 0.8rem); margin: 10px auto 15px; }
+            .main-title-emoji { font-size: 0.7em; margin: 0 3px; }
+            .title-highlight { padding: 0 2px; }
+            .input-group input, select, button { padding: 10px; font-size: 14px; }
+            .casino-text { font-size: 12px; letter-spacing: 1px; }
+            .digit-box, .decimal-point-box { width: 16px; height: 16px; font-size: 10px; }
+            .code-label { min-width: 80px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-bar">
+            <div class="version-info">Version 2.00</div>
+            <select id="language-selector">
+                <option value="en">English</option>
+                <option value="ur">Urdu</option>
+                <option value="ar">Arabic</option>
+                <option value="fr">French</option>
+                <option value="ja">Japanese</option>
+                <option value="de">German</option>
+                <option value="ms">Malay</option>
+            </select>
+        </div>
+        <h1><span class="main-title-emoji">🏆</span><span class="title-highlight" data-lang-key="title-vip">VIP</span> <span data-lang-key="title-main">Prize Bond System</span><span class="main-title-emoji">🏆</span></h1>
+        <div class="author-credit"><span data-lang-key="author-prefix">Created With FB</span>: <span class="author-name"> 🤎 Muhammad Ibrahim Mushtaq The Great Man 🤎</span></div>
+
+        <div id="a-inputs-container">
+            <div class="input-group">
+                <input type="text" id="numA1" class="input-gold" placeholder="A1 Number" data-lang-key="placeholder-a" data-num="1" value="859893" pattern="[0-9]*" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                <input type="text" id="numA2" class="input-gold" placeholder="A2 Number" data-lang-key="placeholder-a" data-num="2" value="876095" pattern="[0-9]*" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                <input type="text" id="numA3" class="input-gold" placeholder="A3 Number" data-lang-key="placeholder-a" data-num="3" value="281066" pattern="[0-9]*" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+            </div>
+        </div>
+
+        <div id="b-inputs-container">
+            <div class="input-group">
+                <input type="text" id="numB1" class="input-silver" placeholder="B1 Number" data-lang-key="placeholder-b" data-num="1" value="876" pattern="[0-9]*" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                <input type="text" id="numB2" class="input-silver" placeholder="B2 Number" data-lang-key="placeholder-b" data-num="2" value="281" pattern="[0-9]*" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+            </div>
+        </div>
+        
+        <div class="button-group">
+            <button onclick="VIPPrizeBondSystem.addNumberPair()" class="glow-button" data-lang-key="add-pair">➕ Add Number Pair</button>
+            <button onclick="VIPPrizeBondSystem.removeNumberPair()" class="glow-button" data-lang-key="remove-pair" style="background: linear-gradient(135deg, #C0C0C0 0%, #E6E6E6 100%);">➖ Remove Number Pair</button>
+        </div>
+
+        <div class="operation-selector">
+            <div id="divisionBtn" class="operation-btn active" onclick="VIPPrizeBondSystem.setOperation('division')" data-lang-key="division">Division</div>
+            <div id="multiplicationBtn" class="operation-btn" onclick="VIPPrizeBondSystem.setOperation('multiplication')" data-lang-key="multiplication">Multiplication</div>
+        </div>
+
+        <div class="range-selector-container">
+            <div class="range-label" data-lang-key="range-label">💰 Select Prize Range:</div>
+            <div class="range-options">
+                <div class="range-btn active" data-value="100000-1000000" onclick="VIPPrizeBondSystem.setRange('100000-1000000', this)" data-lang-key="range1">1 to 10 Lakh</div>
+                <div class="range-btn" data-value="1000000-5000000" onclick="VIPPrizeBondSystem.setRange('1000000-5000000', this)" data-lang-key="range2">10 to 50 Lakh</div>
+                <div class="range-btn" data-value="5000000-10000000" onclick="VIPPrizeBondSystem.setRange('5000000-10000000', this)" data-lang-key="range3">50 Lakh to 1 Crore</div>
+                <div class="range-btn" data-value="custom" onclick="VIPPrizeBondSystem.setRange('custom', this)" data-lang-key="range-custom">Custom</div>
+            </div>
+        </div>
+
+        <div class="custom-range" id="customRangeInputs">
+            <input type="text" id="customMin" placeholder="Minimum Value" pattern="[0-9]*" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+            <input type="text" id="customMax" placeholder="Maximum Value" pattern="[0-9]*" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+        </div>
+
+        <button onclick="VIPPrizeBondSystem.calculate()" class="glow-button" data-lang-key="calculate">🔍 Calculate</button>
+        <button onclick="VIPPrizeBondSystem.findPatternMatches()" class="glow-button" data-lang-key="find-patterns">✨ Find Pattern Matches</button>
+        <button onclick="VIPPrizeBondSystem.toggleHistory()" class="glow-button" data-lang-key="search-history">📜 Search History 📜</button>
+
+        <div class="result-section" id="results-container">
+            <div id="commonNumbers" class="common-numbers"></div>
+            <div id="codeResults" class="code-result"></div>
+        </div>
+
+        <div class="pattern-section" id="patternResults">
+            <div id="patternMatchCount" class="common-numbers"></div>
+            <div id="patternMatches" class="pattern-result"></div>
+        </div>
+
+        <div class="history-section" id="history-container">
+            <div class="section-title" data-lang-key="search-history-title">📜 Search History 📜</div>
+            <div id="history-list"></div>
+        </div>
+    </div>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="progress-bar-container">
+            <div id="progressBar" class="progress-bar"></div>
+            <div id="progressText" class="progress-text">0%</div>
+        </div>
+        <div class="casino-text" id="loadingText">Calculating Winning Code!</div>
+    </div>
+    <div id="popup-message"></div>
+    <div id="footer-popup" class="footer-popup">
+        <a href="https://gmitweb.com" target="_blank"> Build with 💪💪💪 GODS OF DEVELOPEMENT </a>
+        <button class="close-btn" onclick="this.parentElement.classList.remove('show')">&times;</button>
+    </div>
+
+    <!-- Web Worker Script -->
+    <script id="calculator-worker" type="javascript/worker">
+        'use strict';
+
+        // Worker-side functions for calculation
+        function preciseDivision(dividend, divisor, precision = 16) {
+            if (typeof dividend !== 'number' || typeof divisor !== 'number') return "Invalid input";
+            if (divisor === 0) return "Infinity";
+            
+            const isNegative = (dividend < 0) !== (divisor < 0);
+            dividend = Math.abs(dividend);
+            divisor = Math.abs(divisor);
+            
+            let result = Math.floor(dividend / divisor).toString();
+            let remainder = dividend % divisor;
+            
+            if (remainder !== 0 && precision > 0) {
+                result += '.';
+                let decimalCount = 0;
+                while (remainder !== 0 && decimalCount < precision) {
+                    remainder *= 10;
+                    result += Math.floor(remainder / divisor).toString();
+                    remainder %= divisor;
+                    decimalCount++;
+                }
+            }
+            
+            return isNegative && result !== '0' ? '-' + result : result;
+        }
+
+        function preciseMultiplication(num1, num2) {
+            if (typeof num1 !== 'number' || typeof num2 !== 'number') return "Invalid input";
+            return (BigInt(num1) * BigInt(num2)).toString();
+        }
+
+        // Main worker logic
+        self.onmessage = function(e) {
+            const { numbersA, numbersB, min, max, operation, task } = e.data;
+            const totalSteps = max - min + 1;
+            let commonNumbers = [];
+            let lastReportedProgress = -1;
+
+            for (let i = min; i <= max; i++) {
+                let allConditionsMet = true;
+                for (let j = 0; j < numbersB.length; j++) {
+                    if (numbersA[j] && numbersB[j]) {
+                        const result = (operation === 'division') 
+                            ? preciseDivision(numbersA[j], i, 16) 
+                            : preciseMultiplication(numbersA[j], i);
+                        
+                        if (!result.includes(numbersB[j])) {
+                            allConditionsMet = false;
+                            break;
+                        }
+                    }
+                }
+                
+                if (allConditionsMet) {
+                    commonNumbers.push(i);
+                }
+
+                // Report progress
+                const progress = Math.round(((i - min + 1) / totalSteps) * 100);
+                if (progress > lastReportedProgress) {
+                    self.postMessage({ type: 'progress', progress: progress });
+                    lastReportedProgress = progress;
+                }
+            }
+
+            if (task === 'calculate') {
+                const calculationResults = commonNumbers.map(cm => {
+                    const results = numbersA.map(numA => {
+                        if (numA) {
+                            return (operation === 'division') 
+                                ? preciseDivision(numA, cm, 16) 
+                                : preciseMultiplication(numA, cm);
+                        }
+                        return null;
+                    });
+                    return { cm, results };
+                });
+                self.postMessage({ type: 'complete', payload: { calculationResults } });
+
+            } else if (task === 'findPatternMatches') {
+                const patternMatches = [];
+                commonNumbers.forEach(cm => {
+                    const allResults = numbersA.map(numA => numA ? (operation === 'division' ? preciseDivision(numA, cm, 16) : preciseMultiplication(numA, cm)) : null);
+                    let positions = [];
+                    let isMatch = true;
+                    
+                    for (let j = 0; j < numbersB.length; j++) {
+                        if (numbersA[j] && numbersB[j]) {
+                            const result = allResults[j];
+                            const bValue = numbersB[j];
+                            if (result && result.includes(bValue)) {
+                                positions.push(result.indexOf(bValue));
+                            } else {
+                                isMatch = false;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (isMatch && positions.length > 1 && positions.every(p => p === positions[0])) {
+                        patternMatches.push({ cm, position: positions[0], results: allResults });
+                    }
+                });
+                self.postMessage({ type: 'complete', payload: { patternMatches } });
+            }
+        };
+    </script>
+
+    <!-- Main Application Script -->
+    <script>
+        'use strict';
+        
+        const VIPPrizeBondSystem = (function() {
+            let currentOperation = 'division';
+            let currentRange = '100000-1000000';
+            let aCounter = 3;
+            let bCounter = 2;
+            let searchHistory = [];
+            let currentLanguage = 'en';
+            let worker = null;
+
+            const translations = {
+                en: { 'title-vip': 'VIP', 'title-main': 'Prize Bond System', 'author-prefix': 'Created With FB', 'add-pair': '➕ Add Number Pair', 'remove-pair': '➖ Remove Number Pair', 'division': 'Division', 'multiplication': 'Multiplication', 'range-label': '💰 Select Prize Range:', 'range1': '1 to 10 Lakh', 'range2': '10 to 50 Lakh', 'range3': '50 Lakh to 1 Crore', 'range-custom': 'Custom', 'calculate': '🔍 Calculate', 'find-patterns': '✨ Find Pattern Matches', 'search-history': '📜 Search History 📜', 'results-found': 'Results Found', 'pattern-results-title': '💎 Pattern Matching Results 💎', 'search-history-title': '📜 Search History �', 'no-history': 'No past searches found.', 'reload': 'Reload', 'popup-reloaded': 'Previous search loaded successfully!', 'popup-no-match': 'No matching patterns found.', 'placeholder-a': 'A{num} Number', 'placeholder-b': 'B{num} Number', 'history-type': 'Type', 'history-op': 'Operation', 'history-results': 'Results', 'history-details': 'Details', 'history-time': 'Time', },
+                ur: { 'title-vip': 'وی آئی پی', 'title-main': 'پرائز بانڈ سسٹم', 'author-prefix': 'کے ساتھ بنایا گیا FB', 'add-pair': '➕ نمبر جوڑا شامل کریں۔', 'remove-pair': '➖ نمبر جوڑا ہٹائیں', 'division': 'تقسیم', 'multiplication': 'ضرب', 'range-label': '💰 انعام کی حد منتخب کریں۔', 'range1': '1 سے 10 لاکھ', 'range2': '10 سے 50 لاکھ', 'range3': '50 لاکھ سے 1 کروڑ', 'range-custom': 'اپنی مرضی کے مطابق', 'calculate': '🔍 حساب لگائیں۔', 'find-patterns': '✨ پیٹرن میچز تلاش کریں۔', 'search-history': '📜 تلاش کی سرگزشت 📜', 'results-found': 'نتائج ملے۔', 'pattern-results-title': '💎 پیٹرن میچنگ کے نتائج 💎', 'search-history-title': '📜 تلاش کی سرگزشت ?', 'no-history': 'کوئی ماضی کی تلاش نہیں ملی۔', 'reload': 'دوبارہ لوڈ کریں۔', 'popup-reloaded': 'پچھلی تلاش کامیابی سے لوڈ ہو گئی۔', 'popup-no-match': 'کوئی مماثل نمونہ نہیں ملا۔', 'placeholder-a': 'A{num} نمبر', 'placeholder-b': 'B{num} نمبر', 'history-type': 'قسم', 'history-op': 'آپریشن', 'history-results': 'نتائج', 'history-details': 'تفصیلات', 'history-time': 'وقت', },
+                ar: { 'title-vip': 'كبار الشخصيات', 'title-main': 'نظام سندات الجائزة', 'author-prefix': 'تم إنشاؤه باستخدام FB', 'add-pair': '➕ أضف زوج أرقام', 'remove-pair': '➖ إزالة زوج الأرقام', 'division': 'قسمة', 'multiplication': 'ضرب', 'range-label': '💰 حدد نطاق الجائزة', 'range1': '1 إلى 10 لكح', 'range2': '10 لكح إلى 50 لكح', 'range3': '50 لكح إلى 1 كرور', 'range-custom': 'مخصص', 'calculate': '🔍 احسب', 'find-patterns': '✨ البحث عن تطابقات النمط', 'search-history': '📜 سجل البحث 📜', 'results-found': 'تم العثور على نتائج', 'pattern-results-title': '💎 نتائج مطابقة النمط 💎', 'search-history-title': '📜 سجل البحث 📜', 'no-history': 'لم يتم العثور على عمليات بحث سابقة.', 'reload': 'إعادة تحميل', 'popup-reloaded': 'تم تحميل البحث السابق بنجاح!', 'popup-no-match': 'لم يتم العثور على أنماط متطابقة.', 'placeholder-a': 'رقم A{num}', 'placeholder-b': 'رقم B{num}', 'history-type': 'نوع', 'history-op': 'عملية', 'history-results': 'نتائج', 'history-details': 'تفاصيل', 'history-time': 'زمن', },
+                fr: { 'title-vip': 'VIP', 'title-main': 'Système de Bons du Trésor', 'author-prefix': 'Créé avec FB', 'add-pair': '➕ Ajouter une paire', 'remove-pair': '➖ Supprimer la paire', 'division': 'Division', 'multiplication': 'Multiplication', 'range-label': '💰 Sélectionnez la plage de prix', 'range1': '1 à 10 Lakh', 'range2': '10 à 50 Lakh', 'range3': '50 Lakh à 1 Crore', 'range-custom': 'Personnalisé', 'calculate': '🔍 Calculer', 'find-patterns': '✨ Trouver des motifs', 'search-history': '📜 Historique 📜', 'results-found': 'Résultats trouvés', 'pattern-results-title': '💎 Résultats des motifs 💎', 'search-history-title': '📜 Historique de recherche 📜', 'no-history': 'Aucune recherche antérieure.', 'reload': 'Recharger', 'popup-reloaded': 'Recherche chargée avec succès!', 'popup-no-match': 'Aucun motif correspondant trouvé.', 'placeholder-a': 'Nombre A{num}', 'placeholder-b': 'Nombre B{num}', 'history-type': 'Type', 'history-op': 'Opération', 'history-results': 'Résultats', 'history-details': 'Détails', 'history-time': 'Temps', },
+                ja: { 'title-vip': 'VIP', 'title-main': 'プライズボンドシステム', 'author-prefix': 'FBで作成', 'add-pair': '➕ 番号ペアを追加', 'remove-pair': '➖ 番号ペアを削除', 'division': '分割', 'multiplication': '乗算', 'range-label': '💰 賞金範囲を選択', 'range1': '1〜10ラック', 'range2': '10〜50ラック', 'range3': '50ラック〜1カロール', 'range-custom': 'カスタム', 'calculate': '🔍 計算する', 'find-patterns': '✨ パターンを検索', 'search-history': '📜 検索履歴 📜', 'results-found': '件の結果が見つかりました', 'pattern-results-title': '💎 パターンマッチング結果 💎', 'search-history-title': '📜 検索履歴 📜', 'no-history': '過去の検索は見つかりませんでした。', 'reload': 'リロード', 'popup-reloaded': '検索が正常に読み込まれました！', 'popup-no-match': '一致するパターンは見つかりませんでした。', 'placeholder-a': '番号 A{num}', 'placeholder-b': '番号 B{num}', 'history-type': 'タイプ', 'history-op': '操作', 'history-results': '結果', 'history-details': '詳細', 'history-time': '時間', },
+                de: { 'title-vip': 'VIP', 'title-main': 'Gewinnschuldverschreibungssystem', 'author-prefix': 'Erstellt mit FB', 'add-pair': '➕ Zahlenpaar hinzufügen', 'remove-pair': '➖ Zahlenpaar entfernen', 'division': 'Division', 'multiplication': 'Multiplikation', 'range-label': '💰 Preisspanne auswählen:', 'range1': '1 bis 10 Lakh', 'range2': '10 bis 50 Lakh', 'range3': '50 Lakh bis 1 Crore', 'range-custom': 'Benutzerdefiniert', 'calculate': '🔍 Berechnen', 'find-patterns': '✨ Muster finden', 'search-history': '📜 Suchverlauf 📜', 'results-found': 'Ergebnisse gefunden', 'pattern-results-title': '💎 Musterübereinstimmungsergebnisse 💎', 'search-history-title': '📜 Suchverlauf 📜', 'no-history': 'Keine früheren Suchen gefunden.', 'reload': 'Neu laden', 'popup-reloaded': 'Vorherige Suche erfolgreich geladen!', 'popup-no-match': 'Keine passenden Muster gefunden.', 'placeholder-a': 'A{num} Nummer', 'placeholder-b': 'B{num} Nummer', 'history-type': 'Typ', 'history-op': 'Operation', 'history-results': 'Ergebnisse', 'history-details': 'Details', 'history-time': 'Zeit', },
+                ms: { 'title-vip': 'VIP', 'title-main': 'Sistem Bon Hadiah', 'author-prefix': 'Dibuat dengan FB', 'add-pair': '➕ Tambah Pasangan Nombor', 'remove-pair': '➖ Buang Pasangan Nombor', 'division': 'Bahagian', 'multiplication': 'Pendaraban', 'range-label': '💰 Pilih Julat Hadiah:', 'range1': '1 hingga 10 Lakh', 'range2': '10 hingga 50 Lakh', 'range3': '50 Lakh hingga 1 Juta', 'range-custom': 'Tersuai', 'calculate': '🔍 Kira', 'find-patterns': '✨ Cari Padanan Corak', 'search-history': '📜 Sejarah Carian 📜', 'results-found': 'Hasil Ditemui', 'pattern-results-title': '💎 Keputusan Padanan Corak 💎', 'search-history-title': '📜 Sejarah Carian 📜', 'no-history': 'Tiada carian lalu ditemui.', 'reload': 'Muat Semula', 'popup-reloaded': 'Carian sebelumnya berjaya dimuatkan!', 'popup-no-match': 'Tiada corak padanan ditemui.', 'placeholder-a': 'Nombor A{num}', 'placeholder-b': 'Nombor B{num}', 'history-type': 'Jenis', 'history-op': 'Operasi', 'history-results': 'Keputusan', 'history-details': 'Butiran', 'history-time': 'Masa', }
+            };
+
+            function setLanguage(lang) {
+                currentLanguage = lang;
+                document.querySelectorAll('[data-lang-key]').forEach(el => {
+                    const key = el.getAttribute('data-lang-key');
+                    const translation = translations[lang][key] || translations.en[key];
+                    if (el.placeholder !== undefined && el.hasAttribute('data-num')) {
+                        const num = el.getAttribute('data-num');
+                        el.placeholder = translation.replace('{num}', num);
+                    } else {
+                        el.innerHTML = translation;
+                    }
+                });
+                localStorage.setItem('vipPrizeBondLanguage', lang);
+                document.getElementById('language-selector').value = lang;
+                displaySearchHistory();
+            }
+            
+            function setOperation(operation) {
+                currentOperation = operation;
+                document.getElementById('divisionBtn').classList.toggle('active', operation === 'division');
+                document.getElementById('multiplicationBtn').classList.toggle('active', operation === 'multiplication');
+            }
+            
+            function setRange(value, element) {
+                currentRange = value;
+                document.querySelectorAll('.range-btn').forEach(btn => btn.classList.remove('active'));
+                element.classList.add('active');
+                toggleCustomRange();
+            }
+
+            function toggleCustomRange() {
+                document.getElementById('customRangeInputs').style.display = currentRange === 'custom' ? 'flex' : 'none';
+            }
+
+            function addNumberPair() {
+                aCounter++;
+                bCounter++;
+                const aInputsContainer = document.getElementById('a-inputs-container');
+                const bInputsContainer = document.getElementById('b-inputs-container');
+                const aPlaceholder = translations[currentLanguage]['placeholder-a'].replace('{num}', aCounter);
+                const bPlaceholder = translations[currentLanguage]['placeholder-b'].replace('{num}', bCounter);
+
+                const newAInputGroup = document.createElement('div');
+                newAInputGroup.className = 'input-group';
+                newAInputGroup.innerHTML = `<input type="text" id="numA${aCounter}" class="input-gold" placeholder="${aPlaceholder}" data-lang-key="placeholder-a" data-num="${aCounter}" pattern="[0-9]*" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">`;
+                aInputsContainer.appendChild(newAInputGroup);
+
+                const newBInputGroup = document.createElement('div');
+                newBInputGroup.className = 'input-group';
+                newBInputGroup.innerHTML = `<input type="text" id="numB${bCounter}" class="input-silver" placeholder="${bPlaceholder}" data-lang-key="placeholder-b" data-num="${bCounter}" pattern="[0-9]*" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">`;
+                bInputsContainer.appendChild(newBInputGroup);
+            }
+
+            function removeNumberPair() {
+                const aInputsContainer = document.getElementById('a-inputs-container');
+                const bInputsContainer = document.getElementById('b-inputs-container');
+
+                if (aCounter > 3) {
+                    aInputsContainer.removeChild(aInputsContainer.lastChild);
+                    aCounter--;
+                }
+                if (bCounter > 2) {
+                    bInputsContainer.removeChild(bInputsContainer.lastChild);
+                    bCounter--;
+                }
+            }
+
+            function sanitizeInput(value) {
+                return typeof value === 'string' ? value.replace(/[^0-9]/g, '') : '';
+            }
+
+            function createCodeRow(label, num1, num2, code, bValues, isMultiplication = false) {
+                const row = document.createElement('div');
+                row.className = 'code-row';
+                row.innerHTML = `<div class="code-label">${label} = ${num1}${isMultiplication ? '×' : '/'}${num2}</div>`;
+                
+                const digitsContainer = document.createElement('div');
+                digitsContainer.className = 'digit-columns';
+                
+                for (let i = 0; i < code.length; i++) {
+                    const char = code[i];
+                    const column = document.createElement('div');
+                    column.className = 'digit-column';
+                    
+                    if (char === '.' && !isMultiplication) {
+                        column.innerHTML = `<div class="decimal-point-box">.</div>`;
+                    } else {
+                        let isHighlighted = false;
+                        if (Array.isArray(bValues)) {
+                            for (const bValue of bValues) {
+                                if (bValue && code.includes(bValue)) {
+                                    const startIndex = code.indexOf(bValue);
+                                    if (i >= startIndex && i < startIndex + bValue.length) {
+                                        isHighlighted = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        column.innerHTML = `<div class="digit-box ${isHighlighted ? 'highlight' : ''}">${char}</div>`;
+                    }
+                    digitsContainer.appendChild(column);
+                }
+                row.appendChild(digitsContainer);
+                return row;
+            }
+
+            function getInputs() {
+                const aInputs = document.querySelectorAll('#a-inputs-container input');
+                const bInputs = document.querySelectorAll('#b-inputs-container input');
+                const numbersA = Array.from(aInputs).map(input => sanitizeInput(input.value) ? parseFloat(input.value) : null);
+                const numbersB = Array.from(bInputs).map(input => sanitizeInput(input.value) || null);
+                return { numbersA, numbersB };
+            }
+
+            function startWorker(task) {
+                if (worker) {
+                    worker.terminate();
+                }
+
+                const { numbersA, numbersB } = getInputs();
+                let min, max;
+
+                if (currentRange === 'custom') {
+                    min = parseInt(sanitizeInput(document.getElementById('customMin').value), 10);
+                    max = parseInt(sanitizeInput(document.getElementById('customMax').value), 10);
+                    if (isNaN(min) || isNaN(max) || min >= max) {
+                        alert("Please enter a valid custom range!");
+                        return;
+                    }
+                } else {
+                    [min, max] = currentRange.split('-').map(Number);
+                }
+
+                const loader = document.getElementById('loadingOverlay');
+                const progressBar = document.getElementById('progressBar');
+                const progressText = document.getElementById('progressText');
+                loader.style.display = 'flex';
+                progressBar.style.width = '0%';
+                progressText.textContent = '0%';
+                document.getElementById('loadingText').textContent = 'Calculating Winning Code!';
+
+                const workerScript = document.getElementById('calculator-worker').textContent;
+                const workerBlob = new Blob([workerScript], { type: 'application/javascript' });
+                worker = new Worker(URL.createObjectURL(workerBlob));
+
+                worker.onmessage = function(e) {
+                    if (e.data.type === 'progress') {
+                        progressBar.style.width = e.data.progress + '%';
+                        progressText.textContent = e.data.progress + '%';
+                    } else if (e.data.type === 'complete') {
+                        document.getElementById('loadingText').textContent = 'Process Completed!';
+                        
+                        const latestSearch = searchHistory[0];
+                        if (latestSearch && latestSearch.resultCount === 'Calculating...') {
+                            if (task === 'calculate') {
+                                latestSearch.resultCount = e.data.payload.calculationResults.length;
+                            } else if (task === 'findPatternMatches') {
+                                latestSearch.resultCount = e.data.payload.patternMatches.length;
+                            }
+                            localStorage.setItem('vipPrizeBondHistory', JSON.stringify(searchHistory));
+                            displaySearchHistory();
+                        }
+
+                        setTimeout(() => {
+                            loader.style.display = 'none';
+                            if (task === 'calculate') {
+                                renderCalculationResults(e.data.payload.calculationResults);
+                            } else if (task === 'findPatternMatches') {
+                                renderPatternResults(e.data.payload.patternMatches);
+                            }
+                        }, 500);
+                        worker.terminate();
+                        worker = null;
+                    }
+                };
+
+                worker.postMessage({ numbersA, numbersB, min, max, operation: currentOperation, task });
+                
+                saveSearchHistory({
+                    type: task === 'calculate' ? 'Calculation' : 'Pattern Matches',
+                    timestamp: new Date().toISOString(),
+                    inputs: { numbersA, numbersB, operation: currentOperation, range: currentRange, customMin: min, customMax: max },
+                    resultCount: 'Calculating...'
+                });
+            }
+            
+            function calculate() {
+                startWorker('calculate');
+            }
+
+            function findPatternMatches() {
+                startWorker('findPatternMatches');
+            }
+
+            function renderCalculationResults(calculationResults) {
+                document.getElementById('patternMatchCount').innerHTML = '';
+                document.getElementById('patternMatches').innerHTML = '';
+                const { numbersA, numbersB } = getInputs();
+
+                const commonNumbersEl = document.getElementById('commonNumbers');
+                commonNumbersEl.innerHTML = `<h3 class="section-title" style="margin: 15px 0; font-size: 20px;">🎲💰 ${calculationResults.length} ${translations[currentLanguage]['results-found']} 🎲💰</h3>`;
+
+                let codeResultsHTML = calculationResults.map((result, index) => `
+                    <div class="cm-container">
+                        <div class="cm-title">🎲 ${result.cm} 🎲</div>
+                        <div id="digits-${index}"></div>
+                    </div>`).join('');
+                document.getElementById('codeResults').innerHTML = codeResultsHTML;
+
+                calculationResults.forEach((resultData, index) => {
+                    const container = document.getElementById(`digits-${index}`);
+                    if (!container) return;
+                    const bValues = numbersB.filter(B => B !== null);
+                    
+                    resultData.results.forEach((code, codeIndex) => {
+                        const numA = numbersA[codeIndex];
+                        if (numA && code) {
+                            const row = createCodeRow(`Result ${codeIndex + 1}`, numA, resultData.cm, code, bValues, currentOperation === 'multiplication');
+                            container.appendChild(row);
+                        }
+                    });
+                });
+            }
+
+            function renderPatternResults(patternMatches) {
+                 document.getElementById('commonNumbers').innerHTML = '';
+                 document.getElementById('codeResults').innerHTML = '';
+                 const { numbersA, numbersB } = getInputs();
+
+                const patternCountEl = document.getElementById('patternMatchCount');
+                patternCountEl.innerHTML = `<h3 class="section-title" style="margin: 15px 0; font-size: 20px;">🎰 ${patternMatches.length} ${translations[currentLanguage]['results-found']} 🎰</h3>`;
+                
+                const patternResultsEl = document.getElementById('patternMatches');
+                if (patternMatches.length === 0) {
+                    patternResultsEl.innerHTML = `<div class="pattern-cm-container"><div class="pattern-cm-title">❌ No Pattern Matches Found ❌</div><div>No matches where B-values appear at the same position in the results.</div></div>`;
+                    showPopup(translations[currentLanguage]['popup-no-match'], 'error');
+                } else {
+                    patternResultsEl.innerHTML = patternMatches.map(match => {
+                        const resultsHtml = match.results.map((result, idx) => {
+                            if (!result) return '';
+                            const aValue = numbersA[idx];
+                            const bValue = numbersB[idx] || null;
+                            const codeRow = createCodeRow(`Result ${idx+1}`, aValue, match.cm, result, [bValue], currentOperation === 'multiplication');
+                            return codeRow.outerHTML.replace(/class="/g, 'class="pattern-');
+                        }).join('');
+
+                        return `
+                            <div class="pattern-cm-container">
+                                <div class="pattern-cm-title">💰 ${match.cm} (Position: ${match.position}) 💰</div>
+                                ${resultsHtml}
+                            </div>`;
+                    }).join('');
+                }
+            }
+
+            function saveSearchHistory(searchData) {
+                const latestSearch = searchHistory[0];
+                if (latestSearch && latestSearch.resultCount === 'Calculating...') {
+                    // This entry will be updated by the worker's onmessage handler
+                } else {
+                    searchHistory.unshift(searchData);
+                }
+
+                if (searchHistory.length > 10) searchHistory.pop();
+                localStorage.setItem('vipPrizeBondHistory', JSON.stringify(searchHistory));
+                displaySearchHistory();
+            }
+
+            function loadSearchHistory() {
+                const savedHistory = localStorage.getItem('vipPrizeBondHistory');
+                if (savedHistory) {
+                    searchHistory = JSON.parse(savedHistory);
+                    displaySearchHistory();
+                }
+            }
+
+            function displaySearchHistory() {
+                const historyList = document.getElementById('history-list');
+                if(!historyList) return;
+                historyList.innerHTML = '';
+                if (searchHistory.length === 0) {
+                    historyList.innerHTML = `<p style="text-align:center;">${translations[currentLanguage]['no-history']}</p>`;
+                    return;
+                }
+
+                searchHistory.forEach((item, index) => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item';
+                    const searchDate = item.timestamp ? new Date(item.timestamp).toLocaleString() : 'N/A';
+                    const operationText = translations[currentLanguage][item.inputs.operation] || item.inputs.operation;
+                    historyItem.innerHTML = `
+                        <div class="history-details">
+                            <p><strong>${translations[currentLanguage]['history-type']}:</strong> ${item.type} | <strong>${translations[currentLanguage]['history-op']}:</strong> ${operationText} | <strong>${translations[currentLanguage]['history-results']}:</strong> ${item.resultCount}</p>
+                            <p><strong>${translations[currentLanguage]['history-details']}:</strong> A:[${item.inputs.numbersA.filter(n=>n).join(', ')}] | B:[${item.inputs.numbersB.filter(n=>n).join(', ')}]</p>
+                            <p><strong>${translations[currentLanguage]['history-time']}:</strong> ${searchDate}</p>
+                        </div>
+                        <button onclick="VIPPrizeBondSystem.reloadSearch(${index})">${translations[currentLanguage]['reload']}</button>
+                    `;
+                    historyList.appendChild(historyItem);
+                });
+            }
+
+            function reloadSearch(index) {
+                const searchData = searchHistory[index];
+                if (!searchData) return;
+
+                const { numbersA, numbersB, operation, range, customMin, customMax } = searchData.inputs;
+                setOperation(operation);
+                document.querySelectorAll('.range-btn').forEach(btn => {
+                    if (btn.dataset.value === range) setRange(range, btn);
+                });
+                if (range === 'custom') {
+                    document.getElementById('customMin').value = customMin;
+                    document.getElementById('customMax').value = customMax;
+                }
+
+                const aContainer = document.getElementById('a-inputs-container');
+                aContainer.innerHTML = '';
+                const bContainer = document.getElementById('b-inputs-container');
+                bContainer.innerHTML = '';
+                
+                aCounter = 0; bCounter = 0;
+                
+                let currentAGroup = null;
+                numbersA.forEach((val, i) => {
+                    aCounter++;
+                    if (i % 3 === 0) {
+                        currentAGroup = document.createElement('div');
+                        currentAGroup.className = 'input-group';
+                        aContainer.appendChild(currentAGroup);
+                    }
+                    const input = document.createElement('input');
+                    input.type = 'text'; input.id = `numA${aCounter}`; input.className = 'input-gold';
+                    input.placeholder = `A${aCounter} Number`; input.value = val || ''; input.pattern="[0-9]*";
+                    input.inputMode="numeric"; input.oninput = function() { this.value=this.value.replace(/[^0-9]/g,'') };
+                    currentAGroup.appendChild(input);
+                });
+
+                let currentBGroup = null;
+                numbersB.forEach((val, i) => {
+                    bCounter++;
+                     if (i % 2 === 0) {
+                        currentBGroup = document.createElement('div');
+                        currentBGroup.className = 'input-group';
+                        bContainer.appendChild(currentBGroup);
+                    }
+                    const input = document.createElement('input');
+                    input.type = 'text'; input.id = `numB${bCounter}`; input.className = 'input-silver';
+                    input.placeholder = `B${bCounter} Number`; input.value = val || ''; input.pattern="[0-9]*";
+                    input.inputMode="numeric"; input.oninput = function() { this.value=this.value.replace(/[^0-9]/g,'') };
+                    currentBGroup.appendChild(input);
+                });
+
+                showPopup(translations[currentLanguage]['popup-reloaded']);
+                if (searchData.type === 'Calculation') calculate();
+                else if (searchData.type === 'Pattern Matches') findPatternMatches();
+            }
+            
+            function toggleHistory() {
+                const historyContainer = document.getElementById('history-container');
+                if (historyContainer.style.display === 'block') {
+                    historyContainer.style.display = 'none';
+                } else {
+                    historyContainer.style.display = 'block';
+                    historyContainer.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+
+            function handleFooterPopup() {
+                const today = new Date().toISOString().split('T')[0];
+                const popupData = JSON.parse(localStorage.getItem('footerPopup') || '{}');
+                if (popupData.date !== today || !popupData.count) {
+                    popupData.date = today;
+                    popupData.count = 0;
+                }
+                if (popupData.count < 3) {
+                    setTimeout(() => {
+                        document.getElementById('footer-popup').classList.add('show');
+                        popupData.count++;
+                        localStorage.setItem('footerPopup', JSON.stringify(popupData));
+                    }, 2000);
+                }
+            }
+            
+            function showPopup(message, type = 'success') {
+                const popup = document.getElementById('popup-message');
+                popup.textContent = message;
+                popup.className = type === 'error' ? 'error' : '';
+                popup.classList.add('show');
+                setTimeout(() => popup.classList.remove('show'), 5000);
+            }
+
+            function init() {
+                const savedLang = localStorage.getItem('vipPrizeBondLanguage') || 'en';
+                setLanguage(savedLang);
+                document.getElementById('language-selector').addEventListener('change', (e) => setLanguage(e.target.value));
+                loadSearchHistory();
+                toggleCustomRange();
+                handleFooterPopup();
+            }
+
+            return { setOperation, setRange, addNumberPair, removeNumberPair, calculate, findPatternMatches, reloadSearch, toggleHistory, init };
+        })();
+
+        document.addEventListener('DOMContentLoaded', VIPPrizeBondSystem.init);
+    </script>
+</body>
+</html>
